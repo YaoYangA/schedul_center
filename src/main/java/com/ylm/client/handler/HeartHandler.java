@@ -7,7 +7,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,6 @@ public class HeartHandler extends SimpleChannelInboundHandler<Message.MessageBas
 	private final DateFormat sf = new SimpleDateFormat("HH:mm:ss");
 
 	private NettyClient nettyClient;
-	private int heartbeatCount = 0;
 	private final static String CLIENTID = "test";
 	private long ccTime = 0;//缓存发送时间 单位毫秒
 
@@ -47,21 +45,14 @@ public class HeartHandler extends SimpleChannelInboundHandler<Message.MessageBas
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent) {
 			IdleStateEvent event = (IdleStateEvent) evt;
-			String type = "";
-			if (event.state() == IdleState.READER_IDLE) {
-				type = "read idle";
-			} else if (event.state() == IdleState.WRITER_IDLE) {
-				type = "write idle";
-			} else if (event.state() == IdleState.ALL_IDLE) {
-				type = "all idle";
-			}
 			if(unRecPongTimes < MAX_UN_REC_PONG_TIMES){
 				sendPingMsg(ctx,CLIENTID);
 				unRecPongTimes++;
 			}else{
+				log.info("连接服务器失败，启动定时任务");
 				ctx.channel().close();
 			}
-
+			log.info("超时类型："+event.state());
 		} else {
 			super.userEventTriggered(ctx, evt);
 		}
@@ -72,7 +63,7 @@ public class HeartHandler extends SimpleChannelInboundHandler<Message.MessageBas
 	 * @param context
 	 */
 	protected void sendPingMsg(ChannelHandlerContext context,String client) {
-		heartbeatCount++;
+		log.info("发送ping消息");
 		ccTime = System.currentTimeMillis();
 		context.writeAndFlush(
 				Message.MessageBase.newBuilder()
@@ -81,8 +72,6 @@ public class HeartHandler extends SimpleChannelInboundHandler<Message.MessageBas
 				.setData(String.valueOf(ccTime))
 				.build()
 				);
-
-	 //	log.info("Client sent ping msg to " + context.channel().remoteAddress() + ", count: " + heartbeatCount);
 	}
 
 	/**

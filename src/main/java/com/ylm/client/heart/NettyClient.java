@@ -13,6 +13,9 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +26,9 @@ import java.util.concurrent.TimeUnit;
  * @author lenovo
  *
  */
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class NettyClient {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
