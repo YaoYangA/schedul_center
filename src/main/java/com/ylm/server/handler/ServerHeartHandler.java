@@ -75,8 +75,9 @@ public class ServerHeartHandler extends ChannelInboundHandlerAdapter {
 			ctx.writeAndFlush(createData(clientId, Command.CommandType.AUTH_BACK, "客户端Id是"+clientId+"的建立连接请求success！").build());
 
 		}else if(msgBase.getCmd().equals(Command.CommandType.PING)){
+			log.info("服务端接收到客户端ping消息,服务端回复pong消息");
 			//处理ping消息
-			ctx.writeAndFlush(createData(clientId, Command.CommandType.PONG, "服务器响应客户端Id是"+clientId+"的心跳包").build());
+			ctx.writeAndFlush(createData(clientId, Command.CommandType.PONG, "pong").build());
 			unRecPingTimes = 0;
 
 		}else{

@@ -3,7 +3,6 @@ package com.ylm.server.channelInitializer;
 
 import com.ylm.common.constant.Constant;
 import com.ylm.common.protobuf.Message.MessageBase;
-import com.ylm.server.handler.OtherServerHandler;
 import com.ylm.server.handler.ServerHeartHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -39,6 +38,5 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
 
         //自定义的hanlder
         p.addLast("serverHeartHandler", serverHeartHandler);
-        p.addLast("otherServerHandler", otherServerHandler);
     }
 }

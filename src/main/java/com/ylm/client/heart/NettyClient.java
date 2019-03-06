@@ -3,6 +3,7 @@ package com.ylm.client.heart;
 import com.ylm.client.handler.HeartHandler;
 import com.ylm.client.handler.LogicClientHandler;
 import com.ylm.common.protobuf.Message;
+import com.ylm.util.QuartzUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,6 +17,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +40,13 @@ public class NettyClient {
 	private final static int WRITER_IDLE_TIME_SECONDS = 5;//写操作空闲20秒
 	private final static int ALL_IDLE_TIME_SECONDS = 0;//读写全部空闲40秒
 
+	// 通信失败次数
+	private Integer failCount = 0;
+
 	private EventLoopGroup loop = new NioEventLoopGroup();
 
-
+	private QuartzUtils quartzUtils = new QuartzUtils();
+	private Scheduler scheduler = quartzUtils.getScheduler();
 
 	public void run(String port) throws Exception {
 		try {
@@ -86,15 +92,24 @@ public class NettyClient {
 				ChannelFuture f = bootstrap.connect().addListener((ChannelFuture futureListener)->{
 					final EventLoop eventLoop = futureListener.channel().eventLoop();
 					if (!futureListener.isSuccess()) {
-						log.warn("连接服务器失败，5s后重新尝试连接！");
+						failCount++;
+						log.warn("连接服务器失败，5s后重新尝试连接！重连次数：{}",failCount);
 						futureListener.channel().eventLoop().schedule(() -> doConnect(new Bootstrap(), eventLoop), 5, TimeUnit.SECONDS);
+					}else{
+						failCount = 0;
+						log.info("连接服务器成功，客户端定时任务停止，服务端定时任务启动");
+						scheduler.pauseAll();
+					}
+					if(failCount==3){
+						log.info("重连服务端失败，启动定时任务");
+						scheduler.start();
 					}
 				});
 				f.channel().closeFuture().sync();
 				//eventLoopGroup.shutdownGracefully();
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			log.error("客户端连接出现异常，异常信息：{}",e.getMessage());
 		}
 		return bootstrap;
 	}

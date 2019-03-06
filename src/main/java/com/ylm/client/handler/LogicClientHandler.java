@@ -11,11 +11,12 @@ import org.slf4j.LoggerFactory;
 public class LogicClientHandler extends SimpleChannelInboundHandler<Message> {
 	public Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private final static String CLIENTID = "test";
+	private final static String CLIENTID = "echo";
 
 	// 连接成功后，向server发送消息  
 	@Override  
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		log.info("连接成功后，向server发送认证消息");
 		Message.MessageBase.Builder authMsg = Message.MessageBase.newBuilder();
 		authMsg.setClientId(CLIENTID);
 		authMsg.setCmd(Command.CommandType.AUTH);

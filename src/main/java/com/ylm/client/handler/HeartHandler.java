@@ -52,7 +52,7 @@ public class HeartHandler extends SimpleChannelInboundHandler<Message.MessageBas
 				log.info("连接服务器失败，启动定时任务");
 				ctx.channel().close();
 			}
-			log.info("超时类型："+event.state());
+//			log.info("空闲状态："+event.state());
 		} else {
 			super.userEventTriggered(ctx, evt);
 		}
@@ -99,37 +99,35 @@ public class HeartHandler extends SimpleChannelInboundHandler<Message.MessageBas
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Message.MessageBase msg) throws Exception {
 		if(msg.getCmd().equals(Command.CommandType.AUTH_BACK)){
-			log.info(msg.getData());
+			log.info("消息类型:{},消息内容:{}",Command.CommandType.AUTH_BACK,msg.getData());
 			ctx.writeAndFlush(
 					Message.MessageBase.newBuilder()
 							.setClientId(CLIENTID)
 							.setCmd(Command.CommandType.PUSH_DATA)
-							.setData("发送业务数据中。。。")
+							.setData("客户端发送业务数据中。。。")
 							.build()
 			);
 		}else if(msg.getCmd().equals(Command.CommandType.PING)){
 			//接收到server发送的ping指令
-			log.info(msg.getData());
+			log.info("消息类型：{};消息内容：{}",Command.CommandType.PING,msg.getData());
 
 		}else if(msg.getCmd().equals(Command.CommandType.PONG)){
 			//接收到server发送的pong指令
 			unRecPongTimes = 0;
 			//计算ping值
 			long ping = (System.currentTimeMillis()-ccTime)/2;
+			log.info("接收到服务端回复的pong消息，消息内容：{}",msg.getData());
 			log.info("客户端和服务器的ping是"+ping+"ms");
-			//log.info(msg.getData());
-			//计算此时的时间
-			//	log.info(msg.getData());
 		}else if(msg.getCmd().equals(Command.CommandType.PUSH_DATA)){
 			//接收到server推送数据
-			log.info(msg.getData());
+			log.info("消息类型：{};消息内容：{}",Command.CommandType.PUSH_DATA,msg.getData());
 
 		}else if(msg.getCmd().equals(Command.CommandType.PUSH_DATA_BACK)){
 			//接收到server返回数据
-			log.info(msg.getData());
+			log.info("消息类型：{};消息内容：{}",Command.CommandType.PUSH_DATA_BACK,msg.getData());
 
 		}else{
-			log.info(msg.getData());
+			log.info("消息类型：其他;消息内容：{}",msg.getData());
 		}
 	}
 }
