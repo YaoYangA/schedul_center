@@ -21,9 +21,6 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     // 实现心跳的hander
     private ServerHeartHandler serverHeartHandler = new ServerHeartHandler();
 
-    // 其他业务拓展模板参考
-    private OtherServerHandler otherServerHandler = new OtherServerHandler();
-    
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
     	ChannelPipeline p = socketChannel.pipeline();
