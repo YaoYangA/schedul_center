@@ -1,5 +1,8 @@
 package com.ylm;
 
+import com.ylm.client.heart.NettyClient;
+import com.ylm.common.constant.Constant;
+import com.ylm.server.typeServer.TCPServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class Application {
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         if (args.length == 2) {
 //            String flag = Constant.SERVER_FLAG;
 //            String port = "19999";
@@ -40,10 +43,10 @@ public class Application {
                     }
                 }
             } catch (Exception e) {
-//                LOG.error("启动出现异常，标志：{}，端口：{}", flag, port);
+                LOG.error("启动出现异常，标志：{}，端口：{}", flag, port);
             }
         }else {
             System.out.println("启动时请附加正确的参数");
         }
-    }*/
+    }
 }

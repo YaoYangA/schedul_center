@@ -3,6 +3,7 @@ package com.ylm.client.heart;
 import com.ylm.client.handler.HeartHandler;
 import com.ylm.client.handler.LogicClientHandler;
 import com.ylm.common.protobuf.Message;
+import com.ylm.job.QuartzThread;
 import com.ylm.util.QuartzUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -44,9 +45,6 @@ public class NettyClient {
 	private Integer failCount = 0;
 
 	private EventLoopGroup loop = new NioEventLoopGroup();
-
-	private QuartzUtils quartzUtils = new QuartzUtils();
-	private Scheduler scheduler = quartzUtils.getScheduler();
 
 	public void run(String port) throws Exception {
 		try {
@@ -98,11 +96,14 @@ public class NettyClient {
 					}else{
 						failCount = 0;
 						log.info("连接服务器成功，客户端定时任务停止，服务端定时任务启动");
-						scheduler.pauseAll();
+						QuartzUtils quartzUtils = new QuartzUtils();
+						Scheduler scheduler = quartzUtils.getScheduler();
+						scheduler.standby();
 					}
 					if(failCount==3){
 						log.info("重连服务端失败，启动定时任务");
-						scheduler.start();
+						QuartzThread thread = new QuartzThread();
+						new Thread(thread).start();
 					}
 				});
 				f.channel().closeFuture().sync();

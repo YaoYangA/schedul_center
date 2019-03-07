@@ -12,11 +12,7 @@ import com.ylm.server.typeServer.TCPServer;
  */
 public class ServerApplication {
     public static void main(String[] args) {
-        try {
-            TCPServer tcpServer = new TCPServer();
-            tcpServer.start("8080");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        TCPServer tcpServer = new TCPServer();
+        tcpServer.start("8080");
     }
 }

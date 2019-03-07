@@ -21,7 +21,6 @@ public class LogicClientHandler extends SimpleChannelInboundHandler<Message> {
 		authMsg.setClientId(CLIENTID);
 		authMsg.setCmd(Command.CommandType.AUTH);
 		authMsg.setData("This is auth data");
-
 		ctx.writeAndFlush(authMsg.build());
 	}
 

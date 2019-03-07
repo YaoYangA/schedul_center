@@ -3,6 +3,7 @@ package com.ylm.server.handler;
 import com.ylm.common.protobuf.Command;
 import com.ylm.common.protobuf.Message;
 import com.ylm.server.components.ChannelRepository;
+import com.ylm.util.QuartzUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,6 +12,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +60,7 @@ public class ServerHeartHandler extends ChannelInboundHandlerAdapter {
 	}
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+
 		Message.MessageBase msgBase = (Message.MessageBase)msg;
 		String clientId = msgBase.getClientId();
 
@@ -67,6 +71,7 @@ public class ServerHeartHandler extends ChannelInboundHandlerAdapter {
 		}
 		/*认证处理*/
 		if(msgBase.getCmd().equals(Command.CommandType.AUTH)){
+			judgeQuartzStart();
 			log.info("收到客户端Id是"+clientId+"的建立连接请求...");
 			Attribute<String> attr = ctx.attr(clientInfo);
 			attr.set(clientId);
@@ -88,6 +93,24 @@ public class ServerHeartHandler extends ChannelInboundHandlerAdapter {
 			}
 		}
 		ReferenceCountUtil.release(msg);
+	}
+
+	// 判断是否再次启动
+	private void judgeQuartzStart() {
+
+		log.info("判断定时任务的状态，如果客户端关闭了，则需要重启");
+		// 判断所有定时任务的状态
+		try {
+			QuartzUtils quartzUtils = new QuartzUtils();
+			Scheduler scheduler = quartzUtils.getScheduler();
+			if (scheduler.isInStandbyMode()){
+				log.info("客户端关闭了定时任务，重新启动定时任务");
+				scheduler.start();
+				scheduler.resumeAll();
+			}
+		} catch (SchedulerException e) {
+			log.error("重新启动定时任务出错，错误信息：{}",e.getMessage());
+		}
 	}
 
 
