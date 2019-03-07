@@ -19,6 +19,7 @@ public class HelloJob implements Job {
 
         JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
         String url = jobDataMap.getString("url");
+
         System.out.println("执行定时任务："+url);
     }
 }
