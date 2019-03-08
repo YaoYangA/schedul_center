@@ -22,4 +22,22 @@ public interface Constant {
 
     // 服务器全部操作空闲0秒
     int ALL_IDLE_TIME_SECONDS = 0;
+
+    // 请求成功
+    int SUCCESS = 200;
+    // 请求参数错误
+    int PARAM_ERROR = 401;
+
+    // 添加失败
+    int FAIL = 500;
+
+    //添加定时任务的路径
+    String TASK_ADD_PATH = "/task/add";
+
+    //EMPTY 空字符串
+    String EMPTY = "";
+
+    // 固定组
+    String GROUP = "CMPAY_GROUP";
+
 }

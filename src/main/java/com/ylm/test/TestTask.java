@@ -17,8 +17,8 @@ public class TestTask {
     public static void main(String[] args) throws SchedulerException, InterruptedException {
         QuartzUtils quartzUtils = new QuartzUtils();
 //        quartzUtils.resumeAll();
-        quartzUtils.addJob("job1","group1",HelloJob.class,"* * * * * ? *","www.baidu.com");
-        quartzUtils.addJob("job2","group1",HelloJob.class,"0/2 * * * * ? *","www.sina.com");
+//        quartzUtils.addJob("job1","group1","测试",HelloJob.class,"* * * * * ? *","www.baidu.com");
+//        quartzUtils.addJob("job2","group1","银行实收对账",HelloJob.class,"0/2 * * * * ? *","www.sina.com");
 //
 //        quartzUtils.addJob("job2","group2",Job2.class,"* * * * * ? *");
 //        Scheduler scheduler = quartzUtils.getScheduler();

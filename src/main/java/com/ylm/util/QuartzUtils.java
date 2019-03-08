@@ -26,56 +26,52 @@ public class QuartzUtils {
     public Scheduler getScheduler() {
         return scheduler;
     }
+
     public QuartzUtils() {
         try {
             this.scheduler = new StdSchedulerFactory().getScheduler();
         } catch (SchedulerException e) {
-            logger.error("获取调度器出错，异常信息{}",e);
+            logger.error("获取调度器出错，异常信息{}", e);
         }
     }
 
 
-
-    public void addJob(String name, String group, Class<? extends Job> clazz, String cronExpression,String url){
-        try {
-
-            JobKey jobKey = new JobKey(name,group);
-            if (scheduler.checkExists(jobKey)){
-                scheduler.deleteJob(jobKey);
-            }
-            // 构造任务
-            JobDetail job = newJob(clazz)
-                    .withIdentity(name, group)
-                    .usingJobData("url",url)
-                    .build();
-
-            // 构造任务触发器
-            Trigger trg = newTrigger()
-                    .withIdentity(name, group)
-                    .withSchedule(cronSchedule(cronExpression))
-                    .build();
-            // 将作业添加到调度器
-            scheduler.scheduleJob(job,trg);
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-            logger.error("添加作业失败，异常信息{}",e);
+    public void addJob(String name, String group, String description, Class<? extends Job> clazz, String cronExpression, String url) throws Exception {
+        JobKey jobKey = new JobKey(name, group);
+        if (scheduler.checkExists(jobKey)) {
+            scheduler.deleteJob(jobKey);
         }
+        // 构造任务
+        JobDetail job = newJob(clazz)
+                .withIdentity(name, group)
+                .withDescription(description)
+                .usingJobData("url", url)
+                .build();
+
+        // 构造任务触发器
+        Trigger trg = newTrigger()
+                .withIdentity(name, group)
+                .withSchedule(cronSchedule(cronExpression))
+                .build();
+        // 将作业添加到调度器
+        scheduler.scheduleJob(job, trg);
     }
 
     /**
      * 暂停调度中所有的job任务
+     *
      * @throws SchedulerException
      */
-    public  void pauseAll() throws SchedulerException
-    {
+    public void pauseAll() throws SchedulerException {
         scheduler.pauseAll();
     }
+
     /**
      * 恢复调度中所有的job的任务
+     *
      * @throws SchedulerException
      */
-    public  void resumeAll() throws SchedulerException
-    {
+    public void resumeAll() throws SchedulerException {
         scheduler.resumeAll();
     }
 

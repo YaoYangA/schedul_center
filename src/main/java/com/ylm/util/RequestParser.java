@@ -1,13 +1,15 @@
 package com.ylm.util;
 
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.QueryStringDecoder;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,35 +39,39 @@ public class RequestParser {
      *
      * @throws IOException
      */
-    public Map<String, String> parse() throws IOException {
+    public Map<String, Object> parse() throws IOException {
         HttpMethod method = fullReq.method();
+        HttpHeaders headers = fullReq.headers();
+        String contentType = headers.get(HttpHeaderNames.CONTENT_TYPE);
+        Map<String, Object> parmMap = new HashMap<>();
 
-        Map<String, String> parmMap = new HashMap<>();
-
-        if (HttpMethod.GET == method) {
+        if (HttpMethod.GET.equals(method)) {
             // 是GET请求
             QueryStringDecoder decoder = new QueryStringDecoder(fullReq.uri());
             decoder.parameters().entrySet().forEach( entry -> {
                 // entry.getValue()是一个List, 只取第一个元素
                 parmMap.put(entry.getKey(), entry.getValue().get(0));
             });
-        } else if (HttpMethod.POST == method) {
-            // 是POST请求
-            HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(fullReq);
-            decoder.offer(fullReq);
+        } else if (HttpMethod.POST.equals(method)) {
+            // 判断是否是表单提交
+            if (!contentType.equals("application/json")){
+                // 是POST请求
+                HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(fullReq);
+                decoder.offer(fullReq);
 
-            List<InterfaceHttpData> parmList = decoder.getBodyHttpDatas();
+                List<InterfaceHttpData> parmList = decoder.getBodyHttpDatas();
 
-            for (InterfaceHttpData parm : parmList) {
+                for (InterfaceHttpData parm : parmList) {
 
-                Attribute data = (Attribute) parm;
-                parmMap.put(data.getName(), data.getValue());
+                    Attribute data = (Attribute) parm;
+                    parmMap.put(data.getName(), data.getValue());
+                }
+            }else{
+                ByteBuf content = fullReq.content();
+                JSONObject param = JSON.parseObject(content.toString(Charset.forName("UTF-8")));
+                return  param;
             }
-
-        } else {
-            // 不支持其它方法
         }
-
-        return parmMap;
+        return  parmMap;
     }
 }
