@@ -1,6 +1,6 @@
 package com.ylm.server.typeServer;
 
-import com.ylm.http.HttpServer;
+import com.ylm.http.server.HttpServer;
 import com.ylm.job.QuartzThread;
 import lombok.Data;
 import lombok.NoArgsConstructor;

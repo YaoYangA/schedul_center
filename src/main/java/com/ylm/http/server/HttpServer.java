@@ -1,4 +1,4 @@
-package com.ylm.http;
+package com.ylm.http.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -47,7 +47,7 @@ public class HttpServer implements Runnable {
                                     .addLast("decoder", new HttpRequestDecoder())   // 1
                                     .addLast("encoder", new HttpResponseEncoder())  // 2
                                     .addLast("aggregator", new HttpObjectAggregator(512 * 1024))    // 3
-                                    .addLast("handler", new HttpHandler());        // 4
+                                    .addLast("handler", new HttpServerHandler());        // 4
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128) // determining the number of connections queued

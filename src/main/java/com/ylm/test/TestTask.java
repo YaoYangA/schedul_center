@@ -1,6 +1,7 @@
 package com.ylm.test;
 
 import com.ylm.util.QuartzUtils;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
 /**
@@ -21,9 +22,10 @@ public class TestTask {
 //        quartzUtils.addJob("job2","group1","银行实收对账",HelloJob.class,"0/2 * * * * ? *","www.sina.com");
 //
 //        quartzUtils.addJob("job2","group2",Job2.class,"* * * * * ? *");
-//        Scheduler scheduler = quartzUtils.getScheduler();
+        Scheduler scheduler = quartzUtils.getScheduler();
 //        scheduler.start();
-//        scheduler.clear();
+        scheduler.clear();
+        scheduler.shutdown();
 //        scheduler.deleteJob(new JobKey("job2","group2"));
 //        scheduler.resumeAll();
 //

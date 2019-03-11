@@ -1,8 +1,8 @@
-package com.ylm.http;
+package com.ylm.http.server;
 
 import com.alibaba.fastjson.JSON;
 import com.ylm.common.constant.Constant;
-import com.ylm.test.HelloJob;
+import com.ylm.job.CmpayJob;
 import com.ylm.util.CheckUtils;
 import com.ylm.util.QuartzUtils;
 import com.ylm.util.RequestParser;
@@ -25,8 +25,8 @@ import java.util.Map;
  * 深圳易联联盟技术有限公司
  * Copyright (c) 2018 All Rights Reserved.
  */
-public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-    private final static Logger LOG = LoggerFactory.getLogger(HttpHandler.class);
+public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+    private final static Logger LOG = LoggerFactory.getLogger(HttpServerHandler.class);
 
 
     private AsciiString contentType = HttpHeaderValues.APPLICATION_JSON;
@@ -68,7 +68,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
                 try {
                     QuartzUtils quartzUtils = new QuartzUtils();
-                    quartzUtils.addJob(jobName.toString(),Constant.GROUP,description.toString(), HelloJob.class,cron.toString(),url.toString());
+                    quartzUtils.addJob(jobName.toString(),Constant.GROUP,description.toString(), CmpayJob.class,cron.toString(),url.toString());
                     response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                             HttpResponseStatus.OK,
                             Unpooled.wrappedBuffer(JSON.toJSONBytes(result)));
