@@ -3,6 +3,7 @@ package com.ylm.client.heart;
 import com.ylm.client.handler.HeartHandler;
 import com.ylm.client.handler.LogicClientHandler;
 import com.ylm.common.protobuf.Message;
+import com.ylm.http.HttpServer;
 import com.ylm.job.QuartzThread;
 import com.ylm.util.QuartzUtils;
 import io.netty.bootstrap.Bootstrap;
@@ -48,9 +49,15 @@ public class NettyClient {
 
 	public void run(String port) throws Exception {
 		try {
+
 		    if (port != null){
 		        PORT = Integer.parseInt(port);
             }
+			// 启动添加定时任务的HttpServer
+			log.info("客户端添加定时任务，HTTP服务的端口为：{}",PORT+1);
+			HttpServer httpServer = new HttpServer(PORT+1);
+			new Thread(httpServer).start();
+
 			log.info("Client 启动");
 			doConnect(new Bootstrap(), loop);
 		}catch (Exception e) {

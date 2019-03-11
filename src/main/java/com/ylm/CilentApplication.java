@@ -15,7 +15,7 @@ public class CilentApplication {
     public static void main(String[] args) {
         try {
             NettyClient client = new NettyClient();
-            client.run("8080");
+            client.run("8081");
         } catch (Exception e) {
             e.printStackTrace();
         }
