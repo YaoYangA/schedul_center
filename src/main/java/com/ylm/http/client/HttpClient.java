@@ -22,16 +22,10 @@ import java.net.URISyntaxException;
  * @Date 2019/3/11 10:43
  * @Description:
  * @versio 1.0
- * 深圳易联联盟技术有限公司
  * Copyright (c) 2018 All Rights Reserved.
  */
 public class HttpClient {
     private static final Logger log = LoggerFactory.getLogger(HttpClient.class);
-
-    public static void main(String[] args) throws Exception {
-        sendRequest("http://localhost:8080/test");
-    }
-
 
     public static void sendRequest(String url) throws URISyntaxException, InterruptedException, UnsupportedEncodingException, SSLException {
         URI uri = new URI(url);

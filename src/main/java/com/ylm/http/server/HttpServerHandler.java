@@ -22,7 +22,6 @@ import java.util.Map;
  * @Date 2019/3/8 10:06
  * @Description:
  * @versio 1.0
- * 深圳易联联盟技术有限公司
  * Copyright (c) 2018 All Rights Reserved.
  */
 public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
